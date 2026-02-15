@@ -17,18 +17,17 @@ class Sentinel:
 
     def vet_command(self, cmd_list):
         """
-        Vets a shell command. Returns (is_safe, message).
+        Vets a shell command using regex with word boundaries to prevent false positives.
         """
         cmd_str = " ".join(cmd_list).lower()
         
-        # 1. Check for explicitly blocked commands
+        # 1. Check for explicitly blocked commands using word boundaries
         for blocked in self.policy.get("blocked_commands", []):
-            if blocked in cmd_str:
+            # \b matches word boundaries, preventing 'warm' from matching 'rm'
+            pattern = rf"\b{re.escape(blocked)}\b"
+            if re.search(pattern, cmd_str):
                 return False, f"Sentinel Violation: Command contains blocked keyword '{blocked}'"
 
-        # 2. Check for restricted paths or patterns if needed
-        # (Reserved for future expansion like VirusTotal)
-        
         return True, "Safe"
 
 if __name__ == "__main__":

@@ -6,10 +6,10 @@ This phase focuses on upgrading the core `AgentMesh` logic to ensure reliability
 - [x] Task: Create comprehensive unit tests for current `AgentMesh` implementation. (b06c367)
     - [x] Write tests for `publish_event` and `subscribe`.
     - [x] Identify race conditions or message loss scenarios during subscriber downtime.
-- [ ] Task: Upgrade `core/protocol.py` to use Redis Streams for persistent event delivery.
-    - [ ] Implement consumer groups support in `AgentMesh.subscribe`.
-    - [ ] Update `publish_event` to write to a Redis Stream (`genie:mesh:stream`).
-- [ ] Task: Refactor `AgentResponse` to leverage the new stream-based signaling.
+- [x] Task: Upgrade `core/protocol.py` to use Redis Streams for persistent event delivery. (a6e91ea)
+    - [x] Implement consumer groups support in `AgentMesh.subscribe`.
+    - [x] Update `publish_event` to write to a Redis Stream (`genie:mesh:stream`).
+- [x] Task: Refactor `AgentResponse` to leverage the new stream-based signaling. (a6e91ea)
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Foundation' (Protocol in workflow.md)
 
 ## Phase 2: Agent Integration & Stress Testing

@@ -1,6 +1,6 @@
 # Implementation Plan: Validate and Stabilize Mesh Protocol
 
-## Phase 1: Foundation & Reliability Enhancements
+## Phase 1: Foundation & Reliability Enhancements [checkpoint: 6ffb28e]
 This phase focuses on upgrading the core `AgentMesh` logic to ensure reliability and event persistence.
 
 - [x] Task: Create comprehensive unit tests for current `AgentMesh` implementation. (b06c367)
@@ -10,7 +10,7 @@ This phase focuses on upgrading the core `AgentMesh` logic to ensure reliability
     - [x] Implement consumer groups support in `AgentMesh.subscribe`.
     - [x] Update `publish_event` to write to a Redis Stream (`genie:mesh:stream`).
 - [x] Task: Refactor `AgentResponse` to leverage the new stream-based signaling. (a6e91ea)
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Foundation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Foundation' (Protocol in workflow.md) (6ffb28e)
 
 ## Phase 2: Agent Integration & Stress Testing
 This phase ensures all specialized agents are correctly using the stabilized protocol.

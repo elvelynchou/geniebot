@@ -1,0 +1,26 @@
+# GenieBot Safety Policy (Sentinel V1)
+
+# Commands that are always allowed
+allowed_commands:
+  - ls
+  - grep
+  - cat
+  - ps
+  - python3
+  - node
+  - gemini
+
+# Commands that must be BLOCKED
+blocked_commands:
+  - rm
+  - mkfs
+  - dd
+  - "sudo apt"
+
+# URL Safety Patterns
+blocked_url_patterns:
+  - ".*\.zip$"
+  - ".*\.exe$"
+
+# Action on violation: "block" or "warn"
+default_action: block

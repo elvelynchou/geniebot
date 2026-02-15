@@ -1,0 +1,12 @@
+{
+    "github_topics": [
+        "https://github.com/topics/ai-agents?o=desc&s=updated",
+        "https://github.com/search?q=OpenClaw&type=repositories&s=updated",
+        "https://github.com/trending/python?since=daily"
+    ],
+    "tech_news": [
+        "https://hn.algolia.com/?q=OpenClaw&sort=byDate",
+        "https://hn.algolia.com/?q=AI+Agents&sort=byDate"
+    ],
+    "blogs": []
+}

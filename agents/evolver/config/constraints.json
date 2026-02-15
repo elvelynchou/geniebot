@@ -1,0 +1,19 @@
+{
+    "immutable_files": [
+        "SOUL.md",
+        "master.py",
+        "start.sh",
+        "core/protocol.py"
+    ],
+    "prohibited_actions": [
+        "direct_code_modification",
+        "api_key_exposure",
+        "reverting_security_updates"
+    ],
+    "priority_focus": [
+        "performance_optimization",
+        "agent_interoperability",
+        "token_efficiency",
+        "anti_bot_resilience"
+    ]
+}

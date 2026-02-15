@@ -1,0 +1,22 @@
+[
+  {"action": "goto", "url": "https://labs.google/fx/tools/flow"},
+  {"action": "wait", "seconds": 8},
+  {"action": "click", "text": "New project"},
+  {"action": "wait", "seconds": 10},
+  {"action": "click", "text": "Text to Video"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Create Image"},
+  {"action": "wait", "seconds": 3},
+  {"action": "click", "text": "Settings"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Outputs per prompt"},
+  {"action": "wait", "seconds": 4},
+  {"action": "click", "selector": "*[role='option']", "text": "1"},
+  {"action": "wait", "seconds": 2},
+  {"action": "type", "selector": "textarea", "text": "Photorealistic miniature city model presented as a sculpted city block on a clean white background. The city represents Shanghai, featuring simplified but recognizable iconic architecture, arranged in a compact, elevated layout. At the very top of the image, display the city name Shanghai in elegant, minimal typography. Directly beneath it, display the temperature 9°C in smaller, subtle text. Epic weather elements interact directly with the city: – Partly cloudy sky with soft sunlight filtering through appears over and around the buildings – Clouds, sunlight, rain, snow, or fog partially envelop the skyline – Weather feels larger than the city, monumental yet calm Soft global illumination, realistic materials, cinematic atmosphere. Minimal, premium, editorial-style composition. Pure white background, no clutter, no UI elements. Ultra-high realism, calm and iconic presentation."},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Create"},
+  {"action": "wait", "seconds": 90},
+  {"action": "snapshot", "path": "shanghai_check.png"},
+  {"action": "download_file", "selector": "img[alt*='Flow Image']", "path": "shanghai_weather.png"}
+]

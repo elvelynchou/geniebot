@@ -1,0 +1,66 @@
+[
+  {
+    "action": "goto",
+    "url": "https://www.reddit.com/prefs/apps",
+    "timeout": 15
+  },
+  {
+    "action": "wait",
+    "seconds": 3
+  },
+  {
+    "action": "extract_semantic",
+    "note": "Check if we are on the right page and see existing apps"
+  },
+  {
+    "action": "click",
+    "text": "create another app...",
+    "timeout": 3
+  },
+  {
+    "action": "click",
+    "text": "are you a developer? create an app...",
+    "timeout": 3
+  },
+  {
+    "action": "wait",
+    "seconds": 2
+  },
+  {
+    "action": "type",
+    "selector": "input[name='name']",
+    "text": "GeminiManager"
+  },
+  {
+    "action": "click",
+    "selector": "input[value='script']",
+    "note": "Select 'script' type"
+  },
+  {
+    "action": "type",
+    "selector": "textarea[name='description']",
+    "text": "An automated CLI agent for personal community management."
+  },
+  {
+    "action": "type",
+    "selector": "input[name='redirect_uri']",
+    "text": "http://localhost:8080"
+  },
+  {
+    "action": "click",
+    "selector": "button[name='create-app']",
+    "note": "Submit form"
+  },
+  {
+    "action": "wait",
+    "seconds": 5
+  },
+  {
+    "action": "dump",
+    "note": "Dump HTML to extract keys manually later if semantic fail"
+  },
+  {
+    "action": "extract_semantic",
+    "note": "Try to read the keys structure"
+  }
+]

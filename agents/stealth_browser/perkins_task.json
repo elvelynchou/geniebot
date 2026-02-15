@@ -1,0 +1,9 @@
+[
+    {"action": "goto", "url": "https://perkinsrwa.com/task"},
+    {"action": "wait", "seconds": 5},
+    {"action": "wait_for", "selector": "div[class*=\"!border-[#207FF3]\"]", "timeout": 20},
+    {"action": "click", "selector": "div[class*=\"!border-[#207FF3]\"]"},
+    {"action": "wait", "seconds": 3},
+    {"action": "click", "text": "Claim", "timeout": 10},
+    {"action": "wait", "seconds": 10}
+]

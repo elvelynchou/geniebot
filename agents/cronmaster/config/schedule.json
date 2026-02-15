@@ -1,0 +1,18 @@
+{
+    "tasks": [
+        {
+            "name": "daily_weather_forecast",
+            "agent": "cronmaster",
+            "args": "job/dailyweather_pub.py",
+            "cron": "0 8 * * *",
+            "enabled": true
+        },
+        {
+            "name": "daily_system_evolution",
+            "agent": "evolver",
+            "args": "",
+            "cron": "0 22 * * *",
+            "enabled": true
+        }
+    ]
+}

@@ -1,0 +1,28 @@
+# Environments
+.venv/
+venv/
+agents/**/venv/
+node_modules/
+
+# Secrets & Configs
+.env
+config/token.json
+config/oauth_creds.json
+
+# Logs & Temporary Files
+logs/
+agents/**/logs/
+*.log
+*.marker
+tmp/
+.gemini/tmp/
+
+# Artifacts
+agents/imggen/output/
+agents/reader_agent/output/
+agents/vault/storage/
+agents/stealth_browser/profiles/
+proof_x_*.png
+snapshot_*.png
+*.jpg
+*.png

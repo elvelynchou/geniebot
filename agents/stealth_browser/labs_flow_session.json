@@ -1,0 +1,38 @@
+[
+  {
+    "action": "click",
+    "selector": "#hero > div > div:nth-of-type(2) > button",
+    "timestamp": 1769615854948
+  },
+  {
+    "action": "click",
+    "selector": "#__next > div:nth-of-type(2) > div > div > button",
+    "timestamp": 1769615860307
+  },
+  {
+    "action": "click",
+    "selector": "html",
+    "timestamp": 1769615865362
+  },
+  {
+    "action": "click",
+    "selector": "div.sc-fd871d0e-6",
+    "timestamp": 1769615868832
+  },
+  {
+    "action": "click",
+    "selector": "#__next > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div > div > div:nth-of-type(2) > div > div > div > div:nth-of-type(2) > button:nth-of-type(2)",
+    "timestamp": 1769615872898
+  },
+  {
+    "action": "click",
+    "selector": "html > body",
+    "timestamp": 1769615875722
+  },
+  {
+    "action": "type",
+    "selector": "#PINHOLE_TEXT_AREA_ELEMENT_ID",
+    "text": "test",
+    "timestamp": 1769615886839
+  }
+]

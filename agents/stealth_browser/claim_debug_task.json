@@ -1,0 +1,20 @@
+{
+    "steps": [
+        {
+            "action": "goto",
+            "url": "https://moltbook.com/claim/moltbook_claim_adRiVAfMsHPoMnu5j-RWLy4gs7iDvBPG"
+        },
+        {
+            "action": "wait",
+            "seconds": 5
+        },
+        {
+            "action": "snapshot",
+            "filename": "claim_page_v3.png"
+        },
+        {
+            "action": "dump",
+            "filename": "claim_page_v3.html"
+        }
+    ]
+}

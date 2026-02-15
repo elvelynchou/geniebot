@@ -1,0 +1,22 @@
+[
+  {"action": "goto", "url": "https://labs.google/fx/tools/flow"},
+  {"action": "wait", "seconds": 5},
+  {"action": "click", "text": "New project"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Text to Video"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Create Image"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Settings"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Outputs per prompt"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "selector": "*[role='option']", "text": "1"},
+  {"action": "wait", "seconds": 2},
+  {"action": "type", "selector": "textarea", "text": "A beautiful, calm woman with her eyes closed, basking in a sharp sliver of bright sunlight inside a dark, moody room. Square-format 1:1, dreamy black and white, ethereal glow, visually stunning face. 8K, hyper-realistic, shallow depth of field. Light leaks, natural film grain, professionally graded, cinematic style, authentic moment"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Create"},
+  {"action": "wait", "seconds": 80},
+  {"action": "snapshot", "path": "generation_check.png"},
+  {"action": "download_file", "selector": "img[alt*='Flow Image']", "path": "woman_sunlight.png"}
+]

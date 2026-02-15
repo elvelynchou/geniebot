@@ -1,0 +1,22 @@
+[
+  {"action": "goto", "url": "https://labs.google/fx/tools/flow"},
+  {"action": "wait", "seconds": 8},
+  {"action": "click", "text": "New project"},
+  {"action": "wait", "seconds": 10},
+  {"action": "click", "text": "Text to Video"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Create Image"},
+  {"action": "wait", "seconds": 3},
+  {"action": "click", "text": "Settings"},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Outputs per prompt"},
+  {"action": "wait", "seconds": 4},
+  {"action": "click", "selector": "*[role='option']", "text": "1"},
+  {"action": "wait", "seconds": 2},
+  {"action": "type", "selector": "textarea", "text": "Ultra-detailed photorealistic, 8K photo of a slim young woman with chocolate-brown hair in a high ponytail, delicate face-framing strands, and a sheer bright yellow small ribbon bow. She wears a bright yellow eyelet-lace dress (round neck, puff sleeves, gold buttons). Seated outdoors at a small round metal patio table with cup of coffee and looking to the camera with smile Background: Sun-dappled. vibrant cafe with a lush ivy-covered wall blooming with pink and red roses. Soft-focus. street scene with a vintage car and people in the distance. Bright natural light, high contrast, elegant pearl drop earrings, delicate bracelet, bold red lipstick. Vintage, dreamy, high-fashion."},
+  {"action": "wait", "seconds": 2},
+  {"action": "click", "text": "Create"},
+  {"action": "wait", "seconds": 90},
+  {"action": "snapshot", "path": "cafe_woman_generation.png"},
+  {"action": "download_file", "selector": "img[alt*='Flow Image']", "path": "cafe_woman_output.png"}
+]

@@ -3,9 +3,9 @@
 ## Phase 1: Foundation & Reliability Enhancements
 This phase focuses on upgrading the core `AgentMesh` logic to ensure reliability and event persistence.
 
-- [ ] Task: Create comprehensive unit tests for current `AgentMesh` implementation.
-    - [ ] Write tests for `publish_event` and `subscribe`.
-    - [ ] Identify race conditions or message loss scenarios during subscriber downtime.
+- [x] Task: Create comprehensive unit tests for current `AgentMesh` implementation. (b06c367)
+    - [x] Write tests for `publish_event` and `subscribe`.
+    - [x] Identify race conditions or message loss scenarios during subscriber downtime.
 - [ ] Task: Upgrade `core/protocol.py` to use Redis Streams for persistent event delivery.
     - [ ] Implement consumer groups support in `AgentMesh.subscribe`.
     - [ ] Update `publish_event` to write to a Redis Stream (`genie:mesh:stream`).

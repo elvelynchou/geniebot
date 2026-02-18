@@ -4,6 +4,14 @@ venv/
 agents/**/venv/
 node_modules/
 
+# Python & Pytest Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+.ipynb_checkpoints/
+
 # Secrets & Configs
 .env
 config/token.json

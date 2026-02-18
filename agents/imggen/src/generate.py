@@ -157,9 +157,10 @@ def generate_with_labflow(prompt, profile):
     ]
 
     task_json = json.dumps(resolve_playbook(playbook))
-    cmd = STEALTH_BROWSER_CMD + ["--profile", profile, "--task", task_json]
+    cmd = STEALTH_BROWSER_CMD + ["--profile", profile, "--task", task_json, "--gui"]
 
     try:
+        cmd = STEALTH_BROWSER_CMD + ["--profile", profile, "--task", task_json]
         subprocess.run(cmd, capture_output=True, text=True)
         
         # Polling for new image

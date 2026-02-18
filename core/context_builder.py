@@ -1,17 +1,17 @@
 import os
-from core.vector_store import VectorStore
+from core.vector_engine import GenieVectorEngine
 
 class ContextBuilder:
-    _vector_store = None # Class-level singleton
+    _vector_engine = None # Class-level singleton
 
     def __init__(self, root_dir=None):
         self.root_dir = root_dir or os.getcwd()
-        # Ensure VectorStore is only initialized ONCE across the whole process
-        if ContextBuilder._vector_store is None:
-            print("[*] Waking up Memory Core (RAG)...")
-            ContextBuilder._vector_store = VectorStore()
-            print("[✓] Memory Core Ready.")
-        self.vector_store = ContextBuilder._vector_store
+        # Ensure VectorEngine is only initialized ONCE
+        if ContextBuilder._vector_engine is None:
+            print("[*] Waking up Optimized Memory Engine (RedisVL)...")
+            ContextBuilder._vector_engine = GenieVectorEngine()
+            print("[✓] Memory Engine Ready.")
+        self.vector_engine = ContextBuilder._vector_engine
 
     def build_context(self, user_input, intent="YOLO"):
         soul_path = os.path.join(self.root_dir, "SOUL.md")
@@ -20,13 +20,13 @@ class ContextBuilder:
             with open(soul_path, "r") as f:
                 soul_content = f.read()
 
-        # RAG Search
+        # RAG Search via RedisVL
         rag_content = ""
         try:
-            relevant_chunks = self.vector_store.search(user_input, top_k=3)
+            relevant_chunks = self.vector_engine.search(user_input, top_k=3)
             rag_content = "\n".join(relevant_chunks)
         except Exception as e:
-            print(f"[!] RAG Search skipped: {e}")
+            print(f"[!] RAG Search failed (Likely missing RediSearch module): {e}")
 
         cwd = os.getcwd()
         context = f"{soul_content}\n\n"

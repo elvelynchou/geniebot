@@ -88,3 +88,7 @@ RuntimeError: Event loop is closed
 | 2026-02-10 12:22:10 | lab_generator | FAIL | No '[role='option']' with text 'Create Image' |
 | 2026-02-10 12:32:06 | lab_generator | FAIL | No '[role='option']' with text 'Create Image' |
 | 2026-02-10 12:37:05 | lab_generator | FAIL | No '[role='option']' with text 'Create Image' |
+| 2026-02-17 01:48:49 | lab_generator | FAIL | No '[role='option']' with text 'Create Image' |
+| 2026-02-17 01:50:43 | lab_generator | FAIL | [Errno 111] Connect call failed ('127.0.0.1', 50295) |
+| 2026-02-18 12:32:06 | lab_generator | FAIL | No '[role='option']' with text 'Create Image' |
+| 2026-02-18 12:43:45 | lab_generator | FAIL | No '[role='option']' with text 'Create Image' |

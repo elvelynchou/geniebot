@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from core.session_manager import SessionManager
 from core.context_builder import ContextBuilder
 from core.ai_wrapper import call_gemini
+from core.router import GenieRouter
 
 # Load environment variables
 load_dotenv()
@@ -19,7 +20,7 @@ REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/1")
 REDIS_RESPONSE_KEY = "genie:response:outbox"
 REDIS_USER_INBOX = "genie:user:inbox"
 
-def process_request(user_input, source, metadata, session_mgr, ctx_builder, redis_client):
+def process_request(user_input, source, metadata, session_mgr, ctx_builder, redis_client, router):
     """
     Processes a single user request from any source.
     """
@@ -30,10 +31,16 @@ def process_request(user_input, source, metadata, session_mgr, ctx_builder, redi
         print(f"\n[Incoming Telegram] {metadata.get('username')}: {user_input}")
 
     try:
+        # 1. Semantic Intent Pre-routing
+        detected_route = router.guide(user_input)
+        if detected_route:
+            print(f"[*] Router: Detected intent -> {detected_route}")
+
         intent = session_mgr.detect_intent(user_input)
         context = ctx_builder.build_context(user_input, intent=intent)
         
-        current_prompt = f"{context}\n\n[INSTRUCTION]: Think in English logic but reply in the user's language.\n\nUser Input: {user_input}"
+        route_hint = f"\n[ROUTER HINT]: User intent detected as {detected_route}. Prioritize this action." if detected_route else ""
+        current_prompt = f"{context}{route_hint}\n\n[INSTRUCTION]: Think in English logic but reply in the user's language.\n\nUser Input: {user_input}"
         
         full_response = ""
         loop_count = 0
@@ -59,19 +66,23 @@ def process_request(user_input, source, metadata, session_mgr, ctx_builder, redi
             # 2. Check for Agent Execution
             agent_match = re.search(r"EXECUTE_AGENT:\s+([a-zA-Z0-9_-]+)(.*)", full_response)
             if not agent_match:
-                # NEW: Support direct photo replies from AI text
+                # 1. ALWAYS check for image tags in the text, even if no agent was called
                 if "IMAGE_GENERATED:" in full_response:
-                    img_path = full_response.split("IMAGE_GENERATED:")[1].split("\n")[0].strip()
+                    raw_path = full_response.split("IMAGE_GENERATED:")[1].split("\n")[0].strip()
+                    # Resolve to absolute path if needed
+                    img_path = os.path.abspath(raw_path) if not os.path.isabs(raw_path) else raw_path
+                    
                     if source == "telegram" and os.path.exists(img_path):
+                        print(f"[*] Detected Image in text: {img_path}")
                         redis_client.rpush(REDIS_RESPONSE_KEY, json.dumps({
                             "chat_id": metadata.get("chat_id"),
                             "type": "photo",
                             "path": img_path,
                             "caption": full_response.split("IMAGE_GENERATED:")[0].strip()[:1000]
                         }))
-                        break # Successfully handled as photo
+                        break # Done with this request
 
-                # No more agents to call, send final text to user
+                # 2. Regular text response
                 if source == "telegram":
                     redis_client.rpush(REDIS_RESPONSE_KEY, json.dumps({
                         "chat_id": metadata.get("chat_id"),
@@ -214,6 +225,7 @@ def execute_agent(name, args, redis_client=None, chat_id=None):
 def main():
     session_mgr = SessionManager()
     ctx_builder = ContextBuilder()
+    router = GenieRouter()
     
     # Redis Setup
     try:
@@ -223,7 +235,7 @@ def main():
         print(f"Warning: Redis connection failed ({e}). Telegram replies will not work.")
         redis_client = None
 
-    print("GenieBot (Bridge-03) Master Engine Active.")
+    print("GenieBot (Bridge-03) Master Engine Active (Semantic Enabled).")
     print("Modes: [CLI] Interactive | [Telegram] Listening on Redis (genie:user:inbox)")
     print("Type 'exit' or 'quit' to stop.")
     
@@ -262,7 +274,7 @@ def main():
                 if user_input.lower() in ["exit", "quit"] and input_source == "cli":
                     break
                 
-                process_request(user_input, input_source, metadata, session_mgr, ctx_builder, redis_client)
+                process_request(user_input, input_source, metadata, session_mgr, ctx_builder, redis_client, router)
                 
                 # Restore CLI prompt
                 if input_source == "cli":

@@ -107,12 +107,31 @@ async def post_init(application):
     # to prevent it from being garbage collected
     application.bot_data['redis_task'] = task
 
+async def get_actual_token():
+    """Fetches the real Telegram token from Redis."""
+    if TOKEN == "SECRET_MANAGED_BY_BROKER":
+        try:
+            import redis.asyncio as redis
+            r = redis.from_url(REDIS_URL, decode_responses=True)
+            real_token = await r.hget("genie:sys:secrets", "TELEGRAM_BOT_TOKEN")
+            await r.aclose()
+            return real_token
+        except Exception as e:
+            logging.error(f"Failed to fetch token from Redis: {e}")
+            return None
+    return TOKEN
+
 def main():
-    if not TOKEN or TOKEN == "your_token_here":
-        print("Error: TELEGRAM_BOT_TOKEN is not set in .env")
+    import asyncio
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    actual_token = loop.run_until_complete(get_actual_token())
+    
+    if not actual_token:
+        print("Error: Could not retrieve TELEGRAM_BOT_TOKEN")
         return
 
-    app = ApplicationBuilder().token(TOKEN).post_init(post_init).build()
+    app = ApplicationBuilder().token(actual_token).post_init(post_init).build()
     
     app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
     

@@ -58,35 +58,39 @@ def resolve_playbook(playbook):
     return resolved
 
 def generate_with_modelscope(prompt):
-    """Generates image using ModelScope API (Default/Fast)."""
-    print(f"[*] Generating with ModelScope API for prompt: {prompt}")
+    """Generates image using ModelScope API via ClawProxy (Token-Blind)."""
+    print(f"[*] Generating with ModelScope (via ClawProxy) for prompt: {prompt}")
     
-    common_headers = {
-        "Authorization": f"Bearer {MODELSCOPE_API_KEY}",
-        "Content-Type": "application/json",
+    proxy_url = "http://127.0.0.1:8080/v1/proxy/modelscope"
+    headers = {
+        "X-Genie-Agent": "imggen",
+        "Content-Type": "application/json"
     }
 
     try:
-        response = requests.post(
-            f"{MODELSCOPE_BASE_URL}v1/images/generations",
-            headers={**common_headers, "X-ModelScope-Async-Mode": "true"},
-            data=json.dumps({
+        # 1. Initiation
+        payload = {
+            "url": f"{MODELSCOPE_BASE_URL}v1/images/generations",
+            "headers": {"X-ModelScope-Async-Mode": "true"},
+            "payload": {
                 "model": "Tongyi-MAI/Z-Image-Turbo",
                 "prompt": prompt
-            }, ensure_ascii=False).encode('utf-8'),
-            timeout=30
-        )
+            }
+        }
+        response = requests.post(proxy_url, headers=headers, json=payload, timeout=30)
         response.raise_for_status()
         task_id = response.json()["task_id"]
         
         print(f"[*] Task ID: {task_id}. Waiting for completion...")
 
         while True:
-            result = requests.get(
-                f"{MODELSCOPE_BASE_URL}v1/tasks/{task_id}",
-                headers={**common_headers, "X-ModelScope-Task-Type": "image_generation"},
-                timeout=10
-            )
+            # 2. Polling
+            poll_payload = {
+                "method": "GET",
+                "url": f"{MODELSCOPE_BASE_URL}v1/tasks/{task_id}",
+                "headers": {"X-ModelScope-Task-Type": "image_generation"}
+            }
+            result = requests.post(proxy_url, headers=headers, json=poll_payload, timeout=10)
             result.raise_for_status()
             data = result.json()
 
@@ -102,13 +106,14 @@ def generate_with_modelscope(prompt):
                 
                 image = Image.open(BytesIO(img_response.content))
                 image.save(target_path)
+                
                 return target_path
             elif status == "FAILED":
                 raise Exception(f"ModelScope generation failed: {data}")
             
             time.sleep(2)
     except Exception as e:
-        print(f"ERROR: ModelScope API failed: {e}")
+        print(f"ERROR: ModelScope Proxy call failed: {e}")
         return None
 
 def generate_with_labflow(prompt, profile):
@@ -177,35 +182,53 @@ def generate_with_labflow(prompt, profile):
 
 def main():
     parser = argparse.ArgumentParser(description="Genie Image Generator")
-    parser.add_argument("--prompt", required=True, help="Image prompt")
+    parser.add_argument("--prompt", help="Direct image prompt")
+    parser.add_argument("--template", help="Name of the template in templates/ folder")
     parser.add_argument("--engine", default="ModelScope", choices=["ModelScope", "Labflow"], help="Engine to use")
-    parser.add_argument("--profile", default="lab_generator", help="Browser profile (for Labflow)")
-    args = parser.parse_args()
+    parser.add_argument("--profile", default="lab_generator", help="Browser profile")
+    
+    args, unknown = parser.parse_known_args()
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
+    
+    final_prompt = ""
 
-    if args.engine == "ModelScope":
-        result_path = generate_with_modelscope(args.prompt)
+    # 1. Resolve Prompt via Template or Direct Input
+    if args.template:
+        template_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates", f"{args.template}.txt")
+        if not os.path.exists(template_path):
+            print(f"ERROR: Template {args.template} not found at {template_path}")
+            sys.exit(1)
+        
+        with open(template_path, "r") as f:
+            final_prompt = f.read()
+        
+        # Inject unknown arguments into template (e.g., --SUBJECT "Value")
+        import re
+        for i in range(0, len(unknown), 2):
+            if i+1 < len(unknown):
+                key = unknown[i].lstrip("-").upper()
+                val = unknown[i+1]
+                final_prompt = final_prompt.replace(f"{{{key}}}", val)
     else:
-        result_path = generate_with_labflow(args.prompt, args.profile)
+        final_prompt = args.prompt
+
+    if not final_prompt:
+        print("ERROR: Either --prompt or --template is required.")
+        sys.exit(1)
+
+    # 2. Execution
+    if args.engine == "ModelScope":
+        result_path = generate_with_modelscope(final_prompt)
+    else:
+        result_path = generate_with_labflow(final_prompt, args.profile)
 
     if result_path:
+        # Standard output for Master Engine
         print(f"IMAGE_GENERATED: {result_path}")
-        
-        # MESH EVOLUTION: Publish event to the grid
-        try:
-            PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
-            sys.path.append(PROJECT_ROOT)
-            from core.protocol import AgentMesh
-            AgentMesh.publish_event("image_ready", {
-                "path": result_path,
-                "prompt": args.prompt,
-                "engine": args.engine
-            })
-        except Exception as e:
-            print(f"Warning: Failed to publish mesh event: {e}")
+        sys.exit(0)
     else:
-        print(f"ERROR: Generation failed with {args.engine}")
+        print(f"CRITICAL ERROR: Generation failed with {args.engine}. Check API keys and network.")
         sys.exit(1)
 
 if __name__ == "__main__":

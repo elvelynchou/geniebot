@@ -59,6 +59,18 @@ def process_request(user_input, source, metadata, session_mgr, ctx_builder, redi
             # 2. Check for Agent Execution
             agent_match = re.search(r"EXECUTE_AGENT:\s+([a-zA-Z0-9_-]+)(.*)", full_response)
             if not agent_match:
+                # NEW: Support direct photo replies from AI text
+                if "IMAGE_GENERATED:" in full_response:
+                    img_path = full_response.split("IMAGE_GENERATED:")[1].split("\n")[0].strip()
+                    if source == "telegram" and os.path.exists(img_path):
+                        redis_client.rpush(REDIS_RESPONSE_KEY, json.dumps({
+                            "chat_id": metadata.get("chat_id"),
+                            "type": "photo",
+                            "path": img_path,
+                            "caption": full_response.split("IMAGE_GENERATED:")[0].strip()[:1000]
+                        }))
+                        break # Successfully handled as photo
+
                 # No more agents to call, send final text to user
                 if source == "telegram":
                     redis_client.rpush(REDIS_RESPONSE_KEY, json.dumps({
@@ -168,6 +180,16 @@ def execute_agent(name, args, redis_client=None, chat_id=None):
                             "path": img_path,
                             "caption": "Image generated successfully."
                         }))
+                    elif "SUCCESS: Post published to" in line:
+                        redis_client.rpush(REDIS_RESPONSE_KEY, json.dumps({
+                            "chat_id": chat_id,
+                            "text": f"✅ {line.strip()}"
+                        }))
+                    elif "ERROR: Publication failed" in line:
+                        redis_client.rpush(REDIS_RESPONSE_KEY, json.dumps({
+                            "chat_id": chat_id,
+                            "text": f"❌ {line.strip()}"
+                        }))
 
             # Heartbeat: If no output for 15s and still running
             if time.time() - last_status_time > 15 and redis_client and chat_id:
@@ -231,6 +253,7 @@ def main():
                         user_input = data.get("text")
                         input_source = "telegram"
                         metadata = data
+                        print(f"[*] [MASTER] Received from TG ({metadata.get('username')}): {user_input}")
                     except json.JSONDecodeError:
                         pass
 
